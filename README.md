@@ -14,24 +14,26 @@ Generally, installing from source (see section `Source Installation from Git`) l
 
 The variable `certbot_install_from_source` controls whether to install Certbot from Git or package management. The latter is the default, so the variable defaults to `no`.
 
-    certbot_auto_renew: true
-    certbot_auto_renew_user: "{{ ansible_user | default(lookup('env', 'USER')) }}"
-    certbot_auto_renew_hour: 3
-    certbot_auto_renew_minute: 30
-    certbot_auto_renew_options: "--quiet --no-self-upgrade"
+By default, this role configures a cron job to run under the provided user account at the given hour and minute, every day. The defaults run `certbot renew` (or `certbot-auto renew`) via the user-crontab of the user ansible was using.
 
-By default, this role configures a cron job to run under the provided user account at the given hour and minute, every day. The defaults run `certbot renew` (or `certbot-auto renew`) via cron every day at 03:30:00 by the user you use in your Ansible playbook. It's preferred that you set a custom user/hour/minute so the renewal is during a low-traffic period and done by a non-root user account.
+It's preferred that you set a custom user/hour/minute so the renewal is during a low-traffic period and done by a non-root user account, see the defaults.yml and change these variables:
+
+- certbot_auto_renew
+- certbot_auto_renew_user
+- certbot_auto_renew_hour
+- certbot_auto_renew_minute
+- certbot_auto_renew_options
 
 ### Automatic Certificate Generation
 
-Currently there is one built-in method for generating new certificates using this role: `standalone`. Other methods (e.g. using nginx or apache and a webroot) may be added in the future.
+Unless the original Role (geerlingguy.certbot) this role aims to implement standalone, apache and nginx.
 
 **For a complete example**: see the fully functional test playbook in [molecule/default/playbook-standalone-nginx-aws.yml](molecule/default/playbook-standalone-nginx-aws.yml).
 
     certbot_create_if_missing: false
     certbot_create_method: standalone
 
-Set `certbot_create_if_missing` to `yes` or `True` to let this role generate certs. Set the method used for generating certs with the `certbot_create_method` variable—current allowed values include: `standalone`.
+Set `certbot_create_if_missing` to `yes` or `True` to let this role generate certs.
 
     certbot_admin_email: email@example.com
 
@@ -56,7 +58,7 @@ The `certbot_create_command` defines the command used to generate the cert.
     certbot_create_standalone_stop_services:
       - nginx
 
-Services that should be stopped while `certbot` runs it's own standalone server on ports 80 and 443. If you're running Apache, set this to `apache2` (Ubuntu), or `httpd` (RHEL), or if you have Nginx on port 443 and something else on port 80 (e.g. Varnish, a Java app, or something else), add it to the list so it is stopped when the certificate is generated.
+Services that should be restarted after `certbot` runs.
 
 These services will only be stopped the first time a new cert is generated.
 
@@ -138,3 +140,4 @@ MIT / BSD
 ## Author Information
 
 This role was created in 2016 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
+Modified by [Stefan Schwarz](https://www.stefanux.de) in 2019.

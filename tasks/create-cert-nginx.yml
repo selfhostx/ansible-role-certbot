@@ -4,20 +4,14 @@
     path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
   register: letsencrypt_cert
 
-- name: Stop webserver to allow certbot to generate a cert.
-  service:
-    name: "{{ servicename_webserver }}"
-    state: stopped
-  when: not letsencrypt_cert.stat.exists
-
 - name: Generate new certificate if one doesn't exist.
   command: "{{ certbot_create_command }}"
   when: not letsencrypt_cert.stat.exists
 
-- name: Start webserver after cert has been generated.
+- name: Restart webserver after cert has been generated.
   service:
     name: "{{ servicename_webserver }}"
-    state: started
+    state: restarted
   when: not letsencrypt_cert.stat.exists
 
 - name: Restart additional services after cert has been generated.

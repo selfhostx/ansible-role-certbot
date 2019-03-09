@@ -7,11 +7,39 @@
 - import_tasks: install-from-source.yml
   when: certbot_install_from_source
 
+- name: set servicename apache2
+  set_fact:
+    servicename_webserver: apache2
+  when: 
+    ansible_os_family == "Debian"
+
+- name: set servicename httpd
+  set_fact:
+    servicename_webserver: httpd
+  when:
+    ansible_os_family == "RedHat"
+
 - include_tasks: create-cert-standalone.yml
   with_items: "{{ certbot_certs }}"
   when:
     - certbot_create_if_missing
     - certbot_create_method == 'standalone'
+  loop_control:
+    loop_var: cert_item
+
+- include_tasks: create-cert-apache.yml
+  with_items: "{{ certbot_certs }}"
+  when:
+    - certbot_create_if_missing
+    - certbot_create_method == 'apache'
+  loop_control:
+    loop_var: cert_item
+
+- include_tasks: create-cert-nginx.yml
+  with_items: "{{ certbot_certs }}"
+  when:
+    - certbot_create_if_missing
+    - certbot_create_method == 'nginx'
   loop_control:
     loop_var: cert_item
 
