@@ -18,5 +18,7 @@
   service:
     name: "{{ item }}"
     state: restarted
-  when: not letsencrypt_cert.stat.exists
+  when:
+    - not letsencrypt_cert.stat.exists
+    - certbot_create_additional_services is defined
   with_items: "{{ certbot_create_additional_services }}"
