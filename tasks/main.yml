@@ -2,10 +2,10 @@
 - import_tasks: include-vars.yml
 
 - import_tasks: install-with-package.yml
-  when: not certbot_install_from_source
+  when: not certbot_install_from_source|bool
 
 - import_tasks: install-from-source.yml
-  when: certbot_install_from_source
+  when: certbot_install_from_source|bool
 
 - name: set servicename apache2
   set_fact:
@@ -49,7 +49,7 @@
 - include_tasks: create-cert-standalone.yml
   with_items: "{{ certbot_certs }}"
   when:
-    - certbot_create_if_missing
+    - certbot_create_if_missing|bool
     - certbot_create_method == 'standalone'
   loop_control:
     loop_var: cert_item
@@ -57,7 +57,7 @@
 - include_tasks: create-cert-apache.yml
   with_items: "{{ certbot_certs }}"
   when:
-    - certbot_create_if_missing
+    - certbot_create_if_missing|bool
     - certbot_create_method == 'apache'
   loop_control:
     loop_var: cert_item
@@ -65,10 +65,10 @@
 - include_tasks: create-cert-nginx.yml
   with_items: "{{ certbot_certs }}"
   when:
-    - certbot_create_if_missing
+    - certbot_create_if_missing|bool
     - certbot_create_method == 'nginx'
   loop_control:
     loop_var: cert_item
 
 - import_tasks: renew-cron.yml
-  when: certbot_auto_renew
+  when: certbot_auto_renew|bool
