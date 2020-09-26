@@ -10,7 +10,7 @@
 - name: set servicename apache2
   set_fact:
     servicename_webserver: apache2
-  when: 
+  when:
     ansible_os_family == "Debian"
 
 - name: set servicename httpd
@@ -21,30 +21,31 @@
 
 - name: set certbot_create_command for standalone mode
   set_fact:
-    certbot_create_command: >-
-    {{ certbot_script }} certonly --standalone --noninteractive --agree-tos
-    --email {{ cert_item.email | default(certbot_admin_email) }}
-    -d {{ cert_item.domains | join(',') }}
+    certbot_create_command: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "standalone"
+  with_items: "{{ certbot_certs }}"
+  loop_control:
+    loop_var: cert_item
 
 - name: set certbot_create_command for apache mode
   set_fact:
-    certbot_create_command: >-
-    {{ certbot_script }} certonly --apache --noninteractive --agree-tos
-    --email {{ cert_item.email | default(certbot_admin_email) }}
-    -d {{ cert_item.domains | join(',') }}
+    certbot_create_command: "{{ certbot_script }} certonly --apache --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "apache"
+  with_items: "{{ certbot_certs }}"
+  loop_control:
+    loop_var: cert_item
 
 - name: set certbot_create_command for nginx mode
   set_fact:
-    certbot_create_command: >-
-    {{ certbot_script }} certonly --nginx --noninteractive --agree-tos
-    --email {{ cert_item.email | default(certbot_admin_email) }}
-    -d {{ cert_item.domains | join(',') }}
+    certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "nginx"
+  with_items: "{{ certbot_certs }}"
+  loop_control:
+    loop_var: cert_item
+
 
 - include_tasks: create-cert-standalone.yml
   with_items: "{{ certbot_certs }}"
