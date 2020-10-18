@@ -11,13 +11,21 @@
   set_fact:
     servicename_webserver: apache2
   when:
-    ansible_os_family == "Debian"
+  - ansible_os_family == "Debian"
+  - certbot_create_method == "apache"
 
 - name: set servicename httpd
   set_fact:
     servicename_webserver: httpd
   when:
-    ansible_os_family == "RedHat"
+  - ansible_os_family == "RedHat"
+  - certbot_create_method == "apache"
+
+- name: set servicename nginx
+  set_fact:
+    servicename_webserver: nginx
+  when:
+  - certbot_create_method == "nginx"
 
 - name: set certbot_create_command for standalone mode
   set_fact:
