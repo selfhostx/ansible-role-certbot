@@ -1,0 +1,25 @@
+# this playbook fixes permission for existing and new letscencrypt certs.
+# some applications do not have a root-masterprocess to read certs.
+
+- name: archive-permissions (read)
+  file:
+    path: /etc/letsencrypt/archive
+    owner: root
+    group: "{{ certbot_ssl_read_group }}"
+    mode: 'g+rX'
+    recurse: yes
+
+- name: Set /etc/letsencrypt/live-permissions 
+  file:
+    path: /etc/letsencrypt/live
+    group: "{{ certbot_ssl_read_group }}"
+    mode: 'g+rX'
+    state: directory
+
+- name: Set /etc/letsencrypt/archive permissions (sticky)
+  file:
+   path: /etc/letsencrypt/archive
+   group: "{{ certbot_ssl_read_group }}"
+   mode: 'g-s'
+   state: directory
+

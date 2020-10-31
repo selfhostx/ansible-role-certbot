@@ -27,6 +27,8 @@
   when:
   - certbot_create_method == "nginx"
 
+- import_tasks: permissions-for-ssl-cert-group.yml
+
 - name: set certbot_create_command for standalone mode
   set_fact:
     certbot_create_command: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
@@ -53,7 +55,6 @@
   with_items: "{{ certbot_certs }}"
   loop_control:
     loop_var: cert_item
-
 
 - include_tasks: create-cert-standalone.yml
   with_items: "{{ certbot_certs }}"
