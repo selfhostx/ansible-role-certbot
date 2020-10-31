@@ -1,25 +1,37 @@
 # this playbook fixes permission for existing and new letscencrypt certs.
 # some applications do not have a root-masterprocess to read certs.
 
-- name: archive-permissions (read)
+- name: Check that archive-folder exists
+  stat:
+    path: "{{ certbot_archive_folder }}"
+  register: certbot_archive_folder_exists
+
+- name: Check that live-folder exists
+  stat:
+    path: "{{ certbot_live_folder }}"
+  register: certbot_live_folder_exists
+
+- name: Set archive-permissions (read)
   file:
-    path: /etc/letsencrypt/archive
+    path: "{{ certbot_archive_folder }}"
     owner: root
     group: "{{ certbot_ssl_read_group }}"
     mode: 'g+rX'
     recurse: yes
+  when: certbot_archive_folder_exists.stat.exists
 
-- name: Set /etc/letsencrypt/live-permissions
+- name: Set live-permissions
   file:
-    path: /etc/letsencrypt/live
+    path: "{{ certbot_live_folder }}"
     group: "{{ certbot_ssl_read_group }}"
     mode: 'g+rX'
     state: directory
+  when: certbot_live_folder_exists.stat.exists
 
-- name: Set /etc/letsencrypt/archive permissions (sticky)
+- name: Set archive-permissions (sticky)
   file:
-   path: /etc/letsencrypt/archive
-   group: "{{ certbot_ssl_read_group }}"
-   mode: 'g-s'
-   state: directory
-
+    path: "{{ certbot_archive_folder }}"
+    group: "{{ certbot_ssl_read_group }}"
+    mode: 'g-s'
+    state: directory
+  when: certbot_archive_folder_exists.stat.exists
