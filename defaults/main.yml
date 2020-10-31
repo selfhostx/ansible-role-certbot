@@ -39,3 +39,4 @@ certbot_ssl_read_group: "ssl-cert"
 certbot_archive_folder: "/etc/letsencrypt/archive"
 certbot_live_folder: "/etc/letsencrypt/live"
 
+servicename_webserver: []
