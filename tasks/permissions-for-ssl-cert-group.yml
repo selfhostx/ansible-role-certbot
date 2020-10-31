@@ -9,7 +9,7 @@
     mode: 'g+rX'
     recurse: yes
 
-- name: Set /etc/letsencrypt/live-permissions 
+- name: Set /etc/letsencrypt/live-permissions
   file:
     path: /etc/letsencrypt/live
     group: "{{ certbot_ssl_read_group }}"
