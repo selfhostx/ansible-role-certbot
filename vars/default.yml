@@ -1,2 +1,4 @@
 ---
 certbot_package: certbot
+certbot_package_apache: python3-certbot-apache
+certbot_package_nginx: python3-certbot-nginx
