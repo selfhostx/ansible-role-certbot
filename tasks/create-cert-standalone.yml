@@ -14,6 +14,8 @@
 - name: Generate new certificate if one doesn't exist.
   command: "{{ certbot_create_command }}"
   when: not letsencrypt_cert.stat.exists
+  environment:
+    USE_PYTHON_3: 1
 
 - name: Start webserver after cert has been generated.
   service:
