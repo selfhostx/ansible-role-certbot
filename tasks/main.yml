@@ -31,7 +31,7 @@
 
 - name: set certbot_create_command for standalone mode
   set_fact:
-    certbot_create_command: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+    certbot_create_command: "{{ certbot_script }} certonly --no-bootstrap --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "standalone"
   with_items: "{{ certbot_certs }}"
