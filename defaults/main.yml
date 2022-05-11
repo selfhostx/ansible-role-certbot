@@ -35,8 +35,9 @@ certbot_keep_updated: true
 certbot_dir: /opt/certbot
 
 # which group should have read-rights to ssl-keys?
-certbot_ssl_read_group: "ssl-cert"
+certbot_ssl_read_group: ""
 certbot_archive_folder: "/etc/letsencrypt/archive"
 certbot_live_folder: "/etc/letsencrypt/live"
 
 servicename_webserver: []
+certbot_create_additional_services: []

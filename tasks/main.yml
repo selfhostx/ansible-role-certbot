@@ -28,6 +28,9 @@
   - certbot_create_method == "nginx"
 
 - import_tasks: permissions-for-ssl-cert-group.yml
+  when:
+  - certbot_ssl_read_group is defined
+  - certbot_ssl_read_group|length>0
 
 - name: set certbot_create_command for standalone mode
   set_fact:
