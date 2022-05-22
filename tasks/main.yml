@@ -1,8 +1,14 @@
 ---
 - import_tasks: include-vars.yml
 
+- import_tasks: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
 - import_tasks: install-with-package.yml
   when: not certbot_install_from_source|bool
+
+- import_tasks: install-with-snap.yml
+  when: certbot_install_method == 'snap'
 
 - import_tasks: install-from-source.yml
   when: certbot_install_from_source|bool

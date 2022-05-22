@@ -6,7 +6,7 @@ Installs and configures Certbot (for Let's Encrypt).
 
 ## Requirements
 
-If installing from source, Git is required. You can install Git using the `geerlingguy.git` role.
+If installing from source, Git is required (i.e. using the `geerlingguy.git` role).
 
 Generally, installing from source (see section `Source Installation from Git`) leads to a better experience using Certbot and Let's Encrypt, especially if you're using an older OS release.
 
@@ -61,6 +61,19 @@ The `certbot_create_command` defines the command used to generate the cert.
 Services that should be restarted after `certbot` runs.
 
 These services will only be stopped the first time a new cert is generated.
+
+
+### Snap Installation
+
+Beginning in December 2020, the Certbot maintainers decided to recommend installing Certbot from Snap rather than maintain scripts like `certbot-auto`.
+
+Setting `certbot_install_method: snap` configures this role to install Certbot via Snap.
+
+This install method is currently experimental and may or may not work across all Linux distributions.
+
+#### Webroot Certificate Generation
+
+When using the `webroot` creation method, a `webroot` item has to be provided for every `certbot_certs` item, specifying which directory to use for the authentication. Also, make sure your webserver correctly delivers contents from this directory.
 
 ### Source Installation from Git
 
