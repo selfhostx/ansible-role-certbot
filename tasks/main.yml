@@ -5,13 +5,13 @@
   when: ansible_os_family == 'RedHat'
 
 - import_tasks: install-with-package.yml
-  when: not certbot_install_from_source|bool
+  when: certbot_install_method == 'package'
 
 - import_tasks: install-with-snap.yml
   when: certbot_install_method == 'snap'
 
 - import_tasks: install-from-source.yml
-  when: certbot_install_from_source|bool
+  when: certbot_install_method == 'source'
 
 - name: set servicename apache2
   set_fact:
@@ -38,18 +38,32 @@
   - certbot_ssl_read_group is defined
   - certbot_ssl_read_group|length>0
 
-- name: set certbot_create_command for standalone mode
+- name: set certbot_create_command for standalone mode (with deploy_hook)
   set_fact:
     certbot_create_command: "{{ certbot_script }} certonly --no-bootstrap --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
-    certbot_create_method == "standalone"
+    - certbot_create_method == "standalone"
+    - certbot_deploy_hook is defined or certbot_deploy_hook_standalone is defined or certbot_deploy_hook_standalone|length>0
+
+    - certbot_deploy_hook_standalone is defined
+    - certbot_deploy_hook_standalone|length>0
+  with_items: "{{ certbot_certs }}"
+  loop_control:
+    loop_var: cert_item
+
+- name: set certbot_create_command for standalone mode (without deploy_hook)
+  set_fact:
+    certbot_create_command: "{{ certbot_script }} certonly --no-bootstrap --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+  when:
+    - certbot_create_method == "standalone"
+    - certbot_deploy_hook is not defined or certbot_deploy_hook_standalone is not defined or certbot_deploy_hook_standalone|length=0
   with_items: "{{ certbot_certs }}"
   loop_control:
     loop_var: cert_item
 
 - name: set certbot_create_command for apache mode
   set_fact:
-    certbot_create_command: "{{ certbot_script }} certonly --apache --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+    certbot_create_command: "{{ certbot_script }} certonly --apache --noninteractive --agree-tos --deploy-hook '{{ certbot_deploy_hook | default('systemctl restart ' + servicename_webserver) }}' --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "apache"
   with_items: "{{ certbot_certs }}"
@@ -58,7 +72,7 @@
 
 - name: set certbot_create_command for nginx mode
   set_fact:
-    certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
+    certbot_create_command: "{{ certbot_script }} certonly --nginx --noninteractive --agree-tos --deploy-hook '{{ certbot_deploy_hook | default('systemctl restart ' + servicename_webserver) }}' --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
   when:
     certbot_create_method == "nginx"
   with_items: "{{ certbot_certs }}"
