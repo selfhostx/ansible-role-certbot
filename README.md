@@ -1,18 +1,14 @@
 # Ansible Role: Certbot (for Let's Encrypt)
 
-[![Build Status](https://travis-ci.org/geerlingguy/ansible-role-certbot.svg?branch=master)](https://travis-ci.org/geerlingguy/ansible-role-certbot)
-
 Installs and configures Certbot (for Let's Encrypt).
+Differences to the original Role (geerlingguy.certbot): this role aims to implement standalone, apache and nginx and deploy_hook feature.
 
 ## Requirements
 
-If installing from source, Git is required (i.e. using the `geerlingguy.git` role).
+If installing from source, Git is required (i.e. using the `geerlingguy.git` role), but its broken right now.
 
-Generally, installing from source (see section `Source Installation from Git`) leads to a better experience using Certbot and Let's Encrypt, especially if you're using an older OS release.
 
 ## Role Variables
-
-The variable `certbot_install_from_source` controls whether to install Certbot from Git or package management. The latter is the default, so the variable defaults to `no`.
 
 By default, this role configures a cron job to run under the provided user account at the given hour and minute, every day. The defaults run `certbot renew` (or `certbot-auto renew`) via the user-crontab of the user ansible was using.
 
@@ -26,7 +22,6 @@ It's preferred that you set a custom user/hour/minute so the renewal is during a
 
 ### Automatic Certificate Generation
 
-Unless the original Role (geerlingguy.certbot) this role aims to implement standalone, apache and nginx.
 
 **For a complete example**: see the fully functional test playbook in [molecule/default/playbook-standalone-nginx-aws.yml](molecule/default/playbook-standalone-nginx-aws.yml).
 
@@ -48,10 +43,6 @@ The email address used to agree to Let's Encrypt's TOS and subscribe to cert-rel
       #     - example3.com
 
 A list of domains (and other data) for which certs should be generated. You can add an `email` key to any list item to override the `certbot_admin_email`.
-
-    certbot_create_command: "{{ certbot_script }} certonly --standalone --noninteractive --agree-tos --email {{ cert_item.email | default(certbot_admin_email) }} -d {{ cert_item.domains | join(',') }}"
-
-The `certbot_create_command` defines the command used to generate the cert.
 
 #### Standalone Certificate Generation
 
@@ -153,4 +144,4 @@ MIT / BSD
 ## Author Information
 
 This role was created in 2016 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
-Modified by [Stefan Schwarz](https://www.stefanux.de) in 2019.
+Modified by [Stefan Schwarz](https://www.stefanux.de) in 2019ff.
