@@ -41,3 +41,5 @@ certbot_live_folder: "/etc/letsencrypt/live"
 
 servicename_webserver: []
 certbot_create_additional_services: []
+
+certbot_systemd_timer_file: "/etc/systemd/system/timers.target.wants/certbot.timer"
