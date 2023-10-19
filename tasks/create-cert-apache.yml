@@ -1,21 +1,21 @@
 ---
 - name: Check if certificate already exists.
-  stat:
+  ansible.builtin.stat:
     path: /etc/letsencrypt/live/{{ cert_item.domains | first | replace('*.', '') }}/cert.pem
   register: letsencrypt_cert
 
 - name: Generate new certificate if one doesn't exist.
-  command: "{{ certbot_create_command }}"
+  ansible.builtin.command: "{{ certbot_create_command }}"
   when: not letsencrypt_cert.stat.exists
 
 - name: Restart webserver after cert has been generated.
-  service:
+  ansible.builtin.service:
     name: "{{ servicename_webserver }}"
     state: restarted
   when: not letsencrypt_cert.stat.exists
 
 - name: Restart additional services after cert has been generated.
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: restarted
   when:

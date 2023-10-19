@@ -5,7 +5,7 @@
   register: certbot_systemd_timer_exists
 
 - name: Add cron job for certbot renewal (if configured).
-  cron:
+  ansible.builtin.cron:
     name: Certbot automatic renewal.
     job: "{{ certbot_script }} renew {{ certbot_auto_renew_options }}"
     minute: "{{ certbot_auto_renew_minute }}"
