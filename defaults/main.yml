@@ -43,3 +43,5 @@ servicename_webserver: []
 certbot_create_additional_services: []
 
 certbot_systemd_timer_file: "/etc/systemd/system/timers.target.wants/certbot.timer"
+# filename under /etc/cron.d:
+certbot_cron_filename: certbot

@@ -8,6 +8,7 @@
   ansible.builtin.cron:
     name: Certbot automatic renewal.
     job: "{{ certbot_script }} renew {{ certbot_auto_renew_options }}"
+    cron_file: "{{ certbot_cron_filename }}"
     minute: "{{ certbot_auto_renew_minute }}"
     hour: "{{ certbot_auto_renew_hour }}"
     user: "{{ certbot_auto_renew_user }}"
