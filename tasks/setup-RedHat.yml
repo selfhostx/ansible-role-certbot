@@ -3,14 +3,14 @@
 - block:
 
   - name: Ensure dnf-plugins are installed on CentOS 8+.
-    yum:
+    ansible.builtin.dnf:
       name: dnf-plugins-core
       state: present
 
   - block:
 
       - name: Enable DNF module for CentOS 8.3+.
-        shell: |
+        ansible.builtin.shell: |
           dnf config-manager --set-enabled powertools
         args:
           warn: false
@@ -20,7 +20,7 @@
         when: ansible_facts['distribution_version'] is version('8.3', '>=')
 
       - name: Enable DNF module for CentOS 8.0–8.2.
-        shell: |
+        ansible.builtin.shell: |
           dnf config-manager --set-enabled PowerTools
         args:
           warn: false
